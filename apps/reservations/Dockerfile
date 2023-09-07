@@ -2,16 +2,14 @@ FROM node:alpine As development
 
 WORKDIR /usr/src/app
 
-COPY package.json ./
-COPY pnpm-lock.yaml ./
+COPY package.json package.json
+COPY yarn.lock yarn.lock
 
-RUN npm install -g pnpm
-
-RUN pnpm install
+RUN yarn install
 
 COPY . .
 
-RUN pnpm run build
+RUN yarn run build
 
 FROM node:alpine As production
 
@@ -20,12 +18,10 @@ ENV NODE_ENV=${NODE_ENV}
 
 WORKDIR /usr/src/app
 
-COPY package.json ./
-COPY pnpm-lock.yaml ./
+COPY package.json package.json
+COPY yarn.lock yarn.lock
 
-RUN npm install -g pnpm
-
-RUN pnpm install --prod
+RUN yarn install
 
 COPY --from=development /usr/src/app/dist ./dist
 
